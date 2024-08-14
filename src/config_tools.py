@@ -82,7 +82,7 @@ class EmptyFileMaker:
             print(f"Error creating JSON file: {e}")
         
 class Pandalizer:
-    
+
     def __init__(self, file_path):
         self.df = pd.read_excel(file_path)
 
@@ -109,6 +109,6 @@ if __name__ == "__main__":
     Create_ExtractedData.empty_file()
     Create_Timestamp.empty_file()
     # Uncomment and implement below as needed
-    df_extracted_data = DF_Excellerator(path_to.xl_file)
+    df_extracted_data = Pandalizer(path_to.xl_file)
     # df_extracted_data.DF_to_Excel('./df_extracted_data2.xlsx')
     # df_extracted_data.get_DF()
