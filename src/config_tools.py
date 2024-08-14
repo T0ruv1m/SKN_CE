@@ -15,12 +15,12 @@ class DIR:
             'res': '../docs/registro',           
             'reg': '../docs/residuo',            
             'mesc': '../docs/mesclados',         
-            'xl_file': '../data/xlsx_data/extracted_data.xlsx',
+            'extracted_data': '../data/xlsx_data/extracted_data.xlsx',
             'gestor_local': 'I:/.shortcut-targets-by-id/1ghlKQQOndN3wMxNW4qM3pTPDbtrYJmTa/GestorDFe/Documentos/CONSORCIO INTERMUNICIPAL DE SAUDE ALTO DAS VERTENTES',
             'timestamp': '../root/timestamp.txt',
             'credentials_file': '../root/credentials.json',
             'token_file': '../root/token.json',
-            'json_file': '../root/object.json',
+            'json_object': '../root/object.json',
             'xml_files': '../data/xml_data',
         }
         
@@ -81,8 +81,8 @@ class EmptyFileMaker:
         except Exception as e:
             print(f"Error creating JSON file: {e}")
         
-
-class DF_Excellerator:
+class Pandalizer:
+    
     def __init__(self, file_path):
         self.df = pd.read_excel(file_path)
 
