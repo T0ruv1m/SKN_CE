@@ -96,8 +96,8 @@ class XMLFileProcessor:
 if __name__ == "__main__":
 
     path_to = DIR()
-    processor = XMLFileProcessor(path_to.xml_files, path_to.cache_file)
-    processor.process_new_files(path_to.new_files)
+    processor = XMLFileProcessor(path_to.xml_data, path_to.cache_compras)
+    processor.process_new_files(path_to.new_compras)
 
-    #drive_processor = XMLFileProcessor(path_to.gestor_local,path_to.csv_gestor)
-    #drive_processor.process_new_files(path_to.new_gestor)
+    gestor_processor = XMLFileProcessor(path_to.gestor_data,path_to.cache_gestor)
+    gestor_processor.process_new_files(path_to.new_gestor)

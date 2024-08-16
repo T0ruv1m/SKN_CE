@@ -33,12 +33,10 @@ def extract_data_from_xml(xml_file):
         # Extract the text after the last semicolon in infCpl
         last_semicolon_text = infCpl_text.split(';')[-1].strip() if ';' in infCpl_text else None
 
-        # Check if last_semicolon_text starts with "Simples" or contains numbers
-        if last_semicolon_text and (last_semicolon_text.startswith("Simples") or re.search(r'\d', last_semicolon_text)):
-            # Apply regex to extract uppercase text following the 44-digit number
-            pattern = r'\d{44}\s+([A-Z\s.,\'()/-]+)'
-            infCpl_match = re.search(pattern, infCpl_text)
-            last_semicolon_text = infCpl_match.group(1).strip() if infCpl_match else None
+        if last_semicolon_text and len(last_semicolon_text) >= 50:
+                regex_pattern = r'\d{44}\s+([A-Z\s.,\'()/-]+)'
+                regex_match = re.search(regex_pattern, infCpl_text)
+                last_semicolon_text = regex_match.group(1).strip() if regex_match else last_semicolon_text
 
 
         # Check if the last_semicolon_text starts with two uppercase letters
@@ -121,12 +119,12 @@ def save_xml_data_to_excel(xml_data, excel_file_path):
 
 if __name__ == "__main__":
     # Define os caminhos
-    dir = DIR()
-    new_files_csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'new_files.csv')
-    output_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'xml_data.xlsx')
+    path_to = DIR()
+    new_compras = path_to.new_compras
+    xl_compras = path_to.xl_compras
 
     # Carrega a lista de novos arquivos XML
-    new_files = load_new_files_list(new_files_csv_path)
+    new_files = load_new_files_list(new_compras)
 
     # Constrói o mapeamento de arquivos XML
     xml_data = build_xml_file_mapping(new_files)
@@ -134,6 +132,6 @@ if __name__ == "__main__":
     # Certifique-se de que xml_data é um dicionário antes de salvá-lo
     if isinstance(xml_data, dict):
         # Salva os dados XML extraídos em um arquivo CSV
-        save_xml_data_to_excel(xml_data, output_file_path)
+        save_xml_data_to_excel(xml_data, xl_compras)
     else:
         print("Erro: xml_data não é um dicionário válido")
