@@ -21,7 +21,11 @@ class DIR:
             'credentials_file': '../root/credentials.json',
             'token_file': '../root/token.json',
             'json_object': '../root/object.json',
-            'xml_files': '../data/xml_data',
+            'cache_file':'../root/cache.csv',
+            'xml_files':'../data/xml_data',
+            'new_files':'../root/new_files.csv',
+            'csv_gestor':'../root/gestor.csv',
+            'new_gestor':'../root/new_gestor.csv',
         }
         
         # Atualiza caminhos baseados no diretório raiz
