@@ -43,7 +43,7 @@ class XMLProcessor:
 
     def build_xml_file_mapping(self, new_files):
         """Build a dictionary mapping XML file names to their extracted values."""
-        xml_data = {'file_name': [], 'nNF': [], 'dhEmi': []}
+        xml_data = {'chNTR': [], 'nNF': [], 'dhEmi': []}
 
         for xml_file_path in new_files:
             if not os.path.exists(xml_file_path):
@@ -57,7 +57,7 @@ class XMLProcessor:
             nnf_text, dhEmi_text = self.extract_data_from_xml(xml_file_path)
 
             # Append the extracted data to the dictionary
-            xml_data['chNFe'].append(file_name_without_ext)
+            xml_data['chNTR'].append(file_name_without_ext)
             xml_data['nNF'].append(nnf_text)
             xml_data['dhEmi'].append(dhEmi_text)
 

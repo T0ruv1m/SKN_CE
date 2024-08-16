@@ -6,7 +6,7 @@ import re
 import pandas as pd
 
 def extract_data_from_xml(xml_file):
-    """Extrai os textos dos elementos chNFe, xMun, infCpl, chNF, Fornecedor, e vProd do arquivo XML."""
+    """Extrai os textos dos elementos chNTR, xMun, infCpl, chNF, Fornecedor, e vProd do arquivo XML."""
     try:
         tree = ET.parse(xml_file)
         root = tree.getroot()
@@ -15,8 +15,8 @@ def extract_data_from_xml(xml_file):
         namespaces = {'nfe': 'http://www.portalfiscal.inf.br/nfe'}
 
         # Find the chNFe element and extract its text
-        chNFe_element = root.find('.//nfe:protNFe/nfe:infProt/nfe:chNFe', namespaces)
-        chNFe_text = chNFe_element.text if chNFe_element is not None else None
+        chNTR_element = root.find('.//nfe:protNFe/nfe:infProt/nfe:chNFe', namespaces)
+        chNTR_text = chNTR_element.text if chNTR_element is not None else None
 
         # Find the xMun element under enderDest and extract its text
         xMun_element = root.find('.//nfe:dest/nfe:enderDest/nfe:xMun', namespaces)
@@ -50,7 +50,7 @@ def extract_data_from_xml(xml_file):
         vProd_element = root.find('.//nfe:total/nfe:ICMSTot/nfe:vProd', namespaces)
         vProd_text = vProd_element.text if vProd_element is not None else None
 
-        return extracted_number, chNFe_text, xMun_text, last_semicolon_text, vProd_text
+        return extracted_number, chNTR_text, xMun_text, last_semicolon_text, vProd_text
     except ET.ParseError:
         print(f"Erro ao analisar o arquivo XML: {xml_file}")
         return None, None, None, None, None
@@ -70,7 +70,7 @@ def load_new_files_list(csv_file_path):
 
 def build_xml_file_mapping(new_files):
     """Constrói um dicionário mapeando nomes de arquivos XML para seus valores extraídos."""
-    xml_data = {'file_name': [], 'chNF': [], 'chNFe': [], 'xMun': [], 'Fornecedor': [], 'vProd': []}
+    xml_data = {'file_name': [], 'chNF': [], 'chNTR': [], 'xMun': [], 'Fornecedor': [], 'vProd': []}
 
     for xml_file_path in new_files:
         # Verifica se o arquivo existe
@@ -82,21 +82,15 @@ def build_xml_file_mapping(new_files):
         file_name_without_ext = os.path.splitext(os.path.basename(xml_file_path))[0]
 
         # Extrai os dados do arquivo XML
-        extracted_number, chNFe_text, xMun_text, last_semicolon_text, vProd_text = extract_data_from_xml(xml_file_path)
+        extracted_number, chNTR_text, xMun_text, last_semicolon_text, vProd_text = extract_data_from_xml(xml_file_path)
 
-        '''
-         # Debugging information to check extracted values
-        print(f"Extraído do arquivo {file_name_without_ext}:")
-        print(f"chNF: {extracted_number}")
-        print(f"chNFe: {chNFe_text}")
-        print(f"xMun: {xMun_text}")
-        print(f"Fornecedor: {last_semicolon_text}")
-        print(f"vProd: {vProd_text}")'''
+        # Convert chNTR_text to a number if it's not None and is numeric
+        chNTR_number = int(chNTR_text) if chNTR_text and chNTR_text.isdigit() else None
 
         # Append the values to the corresponding lists in the dictionary
         xml_data['file_name'].append(file_name_without_ext)
         xml_data['chNF'].append(extracted_number)
-        xml_data['chNFe'].append(chNFe_text)
+        xml_data['chNTR'].append(chNTR_text)
         xml_data['xMun'].append(xMun_text)
         xml_data['Fornecedor'].append(last_semicolon_text)
         xml_data['vProd'].append(vProd_text)

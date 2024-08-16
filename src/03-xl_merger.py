@@ -1,5 +1,5 @@
 import pandas as pd
-from config_tools import DIR
+from config_tools import DIR, Pandalizer
 
 # Modificações recentes:
 # 1. Criado script para combinar duas tabelas Excel com base em uma coluna correspondente.
@@ -20,6 +20,7 @@ class ExcelMerger:
         self.merge_column = merge_column
         self.output_file = output_file
 
+
     def merge_excel_files(self):
         """
         Realiza a junção dos dois arquivos Excel e salva o resultado em um novo arquivo.
@@ -35,13 +36,15 @@ class ExcelMerger:
         merged_df.to_excel(self.output_file, index=False)
         print(f"Arquivos combinados e salvos em {self.output_file}")
 
+    
 # Exemplo de uso
 if __name__ == "__main__":
     path_to = DIR()
     file1 = path_to.xl_compras
     file2 = path_to.xl_gestor
-    column_to_merge_on = 'chNFe'  # Nome da coluna usada para a junção
+    column_to_merge_on = 'chNTR'  # Nome da coluna usada para a junção
     output_file = path_to.xl_combinada
+
 
     merger = ExcelMerger(file1, file2, column_to_merge_on, output_file)
     merger.merge_excel_files()
