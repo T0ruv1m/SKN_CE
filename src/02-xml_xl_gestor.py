@@ -41,8 +41,15 @@ class XMLProcessor:
                     new_files.append(file_path)
         return new_files
 
-    def build_xml_file_mapping(self, new_files):
-        """Build a dictionary mapping XML file names to their extracted values."""
+    def load_existing_data(self, excel_file_path):
+        """Load existing data from the Excel file if it exists."""
+        if os.path.exists(excel_file_path):
+            return pd.read_excel(excel_file_path)
+        else:
+            return pd.DataFrame(columns=['chNTR', 'nNF', 'dhEmi'])
+
+    def build_xml_file_mapping(self, new_files, existing_data):
+        """Build a dictionary mapping XML file names to their extracted values, avoiding duplicates."""
         xml_data = {'chNTR': [], 'nNF': [], 'dhEmi': []}
 
         for xml_file_path in new_files:
@@ -52,6 +59,11 @@ class XMLProcessor:
 
             print(f"Processing file: {xml_file_path}")
             file_name_without_ext = os.path.splitext(os.path.basename(xml_file_path))[0]
+
+            # Skip if this file's data is already in existing_data
+            if file_name_without_ext in existing_data['chNTR'].values:
+                print(f"File already processed: {file_name_without_ext}")
+                continue
 
             # Extract data from the XML file
             nnf_text, dhEmi_text = self.extract_data_from_xml(xml_file_path)
@@ -65,18 +77,27 @@ class XMLProcessor:
 
     def save_xml_data_to_excel(self, xml_data, excel_file_path):
         """Save the extracted XML data to an Excel file."""
-        if not xml_data:
-            print("No data to save.")
+        if not xml_data['chNTR']:
+            print("No new data to save.")
             return
 
-        df = pd.DataFrame(xml_data)
-        df.to_excel(excel_file_path, index=False)
+        # Load existing data from the Excel file
+        existing_data = self.load_existing_data(excel_file_path)
+
+        # Convert new data to DataFrame
+        new_data = pd.DataFrame(xml_data)
+
+        # Combine the new data with the existing data, avoiding duplicates
+        combined_data = pd.concat([existing_data, new_data], ignore_index=True).drop_duplicates(subset=['chNTR'])
+
+        # Save the combined DataFrame to the Excel file
+        combined_data.to_excel(excel_file_path, index=False)
         print(f"Data saved to: {excel_file_path}")
 
 if __name__ == "__main__":
     # Define paths
     path_to = DIR()
-    new_gestor= path_to.new_gestor 
+    new_gestor = path_to.new_gestor 
     xl_gestor = path_to.xl_gestor
 
     # Instantiate the processor
@@ -85,8 +106,11 @@ if __name__ == "__main__":
     # Load the list of new XML files
     new_files = processor.load_new_files_list(new_gestor)
 
+    # Load existing data
+    existing_data = processor.load_existing_data(xl_gestor)
+
     # Build the XML file mapping
-    xml_data = processor.build_xml_file_mapping(new_files)
+    xml_data = processor.build_xml_file_mapping(new_files, existing_data)
 
     # Save the extracted data to an Excel file
     processor.save_xml_data_to_excel(xml_data, xl_gestor)

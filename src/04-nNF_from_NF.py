@@ -30,13 +30,8 @@ class ExcelMerger:
         df2 = pd.read_excel(self.file2_path)
 
         # Realiza a junção com base na coluna especificada
-        df2['nNFe'] = df2['nNF'].map(df_lookup.set_index('nNTR')['nNF'])
         merged_df = pd.merge(df1, df2, on=self.merge_column)
 
-        
-        #df2['nNF'] = df2['nNF'].astype(str)
-        #merged2 = pd.merge(df1, df2[['chNTR','nNF']], left_on='chNF',right_on='nNF')
-        
         # Salva o resultado em um novo arquivo Excel
         merged_df.to_excel(self.output_file, index=False)
         print(f"Arquivos combinados e salvos em {self.output_file}")
@@ -47,11 +42,8 @@ if __name__ == "__main__":
     path_to = DIR()
     file1 = path_to.xl_compras
     file2 = path_to.xl_gestor
-    column_to_merge_on = 'chNTR'  # Nome da coluna usada para a junção
+    column_to_merge_on = 'chNF'  # Nome da coluna usada para a junção
     output_file = path_to.xl_combinada
-    
 
     merger = ExcelMerger(file1, file2, column_to_merge_on, output_file)
     merger.merge_excel_files()
-    
-    

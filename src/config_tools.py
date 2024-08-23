@@ -15,17 +15,22 @@ class DIR:
             'res': '../docs/registro',           
             'reg': '../docs/residuo',            
             'mesc': '../docs/mesclados',         
-            'extracted_data': '../data/xlsx_data/extracted_data.xlsx',
+            
             'xml_data': '../data/xml_data',            
             'gestor_data': 'I:/.shortcut-targets-by-id/1ghlKQQOndN3wMxNW4qM3pTPDbtrYJmTa/GestorDFe/Documentos/CONSORCIO INTERMUNICIPAL DE SAUDE ALTO DAS VERTENTES',
+            
             'timestamp': '../root/timestamp.txt',
             'credentials_file': '../root/credentials.json',
             'token_file': '../root/token.json',
             'json_object': '../root/object.json',
+            
             'cache_compras':'../root/cache_compras.csv',
             'cache_gestor':'../root/cache_gestor.csv',
+            
             'new_compras':'../root/new_compras.csv',
             'new_gestor':'../root/new_gestor.csv',
+
+            'xl_combi': '../data/xlsx_data/xl_combinada.xlsx',
             'xl_compras':'../data/xlsx_data/xl_compras.xlsx',
             'xl_gestor':'../data/xlsx_data/xl_gestor.xlsx',
             'xl_combinada':'../data/xlsx_data/xl_combinada.xlsx'
