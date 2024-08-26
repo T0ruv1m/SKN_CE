@@ -26,7 +26,7 @@ def extract_data_from_xml(xml_file):
 
         number_match = re.search(r'\b\d{44}\b', infCpl_text)
         extracted_number = number_match.group(0) if number_match else None
-
+        '''
         last_semicolon_text = infCpl_text.split(';')[-1].strip() if ';' in infCpl_text else None
 
         if last_semicolon_text and len(last_semicolon_text) >= 50:
@@ -38,11 +38,11 @@ def extract_data_from_xml(xml_file):
             pattern = r'\d{44}\s+([A-Z\s.,\'()/-]+)'
             infCpl_match = re.search(pattern, infCpl_text)
             last_semicolon_text = infCpl_match.group(1).strip() if infCpl_match else None
-
+        '''
         vProd_element = root.find('.//nfe:total/nfe:ICMSTot/nfe:vProd', namespaces)
         vProd_text = vProd_element.text if vProd_element is not None else None
 
-        return extracted_number, chNTR_text, xMun_text, last_semicolon_text, vProd_text
+        return extracted_number, chNTR_text, xMun_text, vProd_text
     except ET.ParseError:
         print(f"Error parsing XML file: {xml_file}")
         return None, None, None, None, None
@@ -88,7 +88,7 @@ def build_xml_file_mapping(new_files, existing_data):
         xml_data['chNF'].append(extracted_number)
         xml_data['chNTR'].append(chNTR_text)
         xml_data['xMun'].append(xMun_text)
-        xml_data['Fornecedor'].append(last_semicolon_text)
+        # xml_data['Fornecedor'].append(last_semicolon_text)
         xml_data['vProd'].append(vProd_text)
 
     return xml_data

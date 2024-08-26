@@ -5,14 +5,14 @@ import pandas as pd
 from config_tools import DIR
 
 class XMLProcessor:
-    """Process XML files to extract <nNF> and <dhEmi> elements."""
+    """Process XML files to extract <nNF>, <dhEmi>, and <xFant> elements."""
 
     def __init__(self, namespaces=None):
         # Define namespaces (if applicable)
         self.namespaces = namespaces or {'nfe': 'http://www.portalfiscal.inf.br/nfe'}
 
     def extract_data_from_xml(self, xml_file):
-        """Extract the <nNF> and <dhEmi> elements' texts from the XML file."""
+        """Extract the <nNF>, <dhEmi>, and <xFant> elements' texts from the XML file."""
         try:
             tree = ET.parse(xml_file)
             root = tree.getroot()
@@ -25,10 +25,14 @@ class XMLProcessor:
             dhEmi_element = root.find('.//nfe:dhEmi', self.namespaces)
             dhEmi_text = dhEmi_element.text[:4] if dhEmi_element is not None and dhEmi_element.text is not None else None
 
-            return nnf_text, dhEmi_text
+            # Find the <xFant> element
+            xFant_element = root.find('.//nfe:xFant', self.namespaces)
+            xFant_text = xFant_element.text if xFant_element is not None else None
+
+            return nnf_text, dhEmi_text, xFant_text
         except ET.ParseError:
             print(f"Error parsing XML file: {xml_file}")
-            return None, None
+            return None, None, None
 
     def load_new_files_list(self, csv_file_path):
         """Load the list of new XML files to process from a CSV file."""
@@ -46,11 +50,11 @@ class XMLProcessor:
         if os.path.exists(excel_file_path):
             return pd.read_excel(excel_file_path)
         else:
-            return pd.DataFrame(columns=['chNTR', 'nNF', 'dhEmi'])
+            return pd.DataFrame(columns=['chNTR', 'nNF', 'dhEmi', 'xFant'])
 
     def build_xml_file_mapping(self, new_files, existing_data):
         """Build a dictionary mapping XML file names to their extracted values, avoiding duplicates."""
-        xml_data = {'chNTR': [], 'nNF': [], 'dhEmi': []}
+        xml_data = {'chNTR': [], 'nNF': [], 'dhEmi': [], 'xFant': []}
 
         for xml_file_path in new_files:
             if not os.path.exists(xml_file_path):
@@ -66,12 +70,13 @@ class XMLProcessor:
                 continue
 
             # Extract data from the XML file
-            nnf_text, dhEmi_text = self.extract_data_from_xml(xml_file_path)
+            nnf_text, dhEmi_text, xFant_text = self.extract_data_from_xml(xml_file_path)
 
             # Append the extracted data to the dictionary
             xml_data['chNTR'].append(file_name_without_ext)
             xml_data['nNF'].append(nnf_text)
             xml_data['dhEmi'].append(dhEmi_text)
+            xml_data['xFant'].append(xFant_text)
 
         return xml_data
 

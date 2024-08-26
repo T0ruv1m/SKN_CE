@@ -60,11 +60,7 @@ if __name__ == "__main__":
     output_file = path_to.xl_combinada
     
 
-    banana = 1
-    banana = banana + 1
-
-    print(banana)
-    #banana = ExcelMerger(file1, file2, column_to_merge_on, output_file)
-    #banana.merge_excel_files()
+    merger = ExcelMerger(file1, file2, column_to_merge_on, output_file)
+    merger.merge_excel_files()
     
     
