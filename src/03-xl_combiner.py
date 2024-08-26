@@ -28,11 +28,20 @@ class ExcelMerger:
         # Carrega os dados dos arquivos Excel
         df1 = pd.read_excel(self.file1_path)
         df2 = pd.read_excel(self.file2_path)
-
+        df2_selected = df2[['chNTR','nNF']]
+        
         # Realiza a junção com base na coluna especificada
-        df2['nNFe'] = df2['nNF'].map(df_lookup.set_index('nNTR')['nNF'])
         merged_df = pd.merge(df1, df2, on=self.merge_column)
-
+        merged_df = pd.merge(merged_df, df2_selected, left_on='chNF', right_on='chNTR')  
+        merged_df = merged_df[['xMun','Fornecedor','chNTR_x','nNF_x','chNF','nNF_y','vProd','dhEmi']].rename(columns={
+            'xMun':'Municipio',
+            'Fornecedor':'FOR',
+            'chNTR_x':'chNTR',
+            'nNF_x': 'nNTR',
+            'nNF_y': 'nNF',
+            'vProd': 'Valor',
+            'dhEmi': 'Ano'
+        })
         
         #df2['nNF'] = df2['nNF'].astype(str)
         #merged2 = pd.merge(df1, df2[['chNTR','nNF']], left_on='chNF',right_on='nNF')
@@ -51,7 +60,11 @@ if __name__ == "__main__":
     output_file = path_to.xl_combinada
     
 
-    merger = ExcelMerger(file1, file2, column_to_merge_on, output_file)
-    merger.merge_excel_files()
+    banana = 1
+    banana = banana + 1
+
+    print(banana)
+    #banana = ExcelMerger(file1, file2, column_to_merge_on, output_file)
+    #banana.merge_excel_files()
     
     
