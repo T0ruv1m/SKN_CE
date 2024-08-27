@@ -27,9 +27,15 @@ class XMLProcessor:
 
             # Find the <xFant> element
             xFant_element = root.find('.//nfe:xFant', self.namespaces)
-            xFant_text = xFant_element.text if xFant_element is not None else None
+
+            if xFant_element is not None:
+                xFant_text = xFant_element.text
+            else:
+                xFant_element = root.find('.//nfe:xNome', self.namespaces)
+                xFant_text = xFant_element.text if xFant_element is not None else None
 
             return nnf_text, dhEmi_text, xFant_text
+
         except ET.ParseError:
             print(f"Error parsing XML file: {xml_file}")
             return None, None, None

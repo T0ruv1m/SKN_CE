@@ -12,17 +12,18 @@ class DIR:
         # Diretórios principais
         self.dirs = {
             'dig': '../docs/digitalizados',
-            'res': '../docs/registro',           
-            'reg': '../docs/residuo',            
-            'mesc': '../docs/mesclados',         
+            'res': '../docs/registro',
+            'reg': '../docs/residuo',
+            'mesc': '../docs/mesclados',
             
-            'xml_data': '../data/xml_data',            
+            'xml_data': '\\\\Mimitop\\02334933000140',  # UNC path with double backslashes
             'gestor_data': 'I:/.shortcut-targets-by-id/1ghlKQQOndN3wMxNW4qM3pTPDbtrYJmTa/GestorDFe/Documentos/CONSORCIO INTERMUNICIPAL DE SAUDE ALTO DAS VERTENTES',
             
             'timestamp': '../root/timestamp.txt',
             'credentials_file': '../root/credentials.json',
             'token_file': '../root/token.json',
             'json_object': '../root/object.json',
+            'merged_files_json':'../root/merged_files.json',
             
             'cache_compras':'../root/cache_compras.csv',
             'cache_gestor':'../root/cache_gestor.csv',
@@ -30,10 +31,11 @@ class DIR:
             'new_compras':'../root/new_compras.csv',
             'new_gestor':'../root/new_gestor.csv',
 
-            'xl_combi': '../data/xlsx_data/xl_combinada.xlsx',
             'xl_compras':'../data/xlsx_data/xl_compras.xlsx',
             'xl_gestor':'../data/xlsx_data/xl_gestor.xlsx',
-            'xl_combinada':'../data/xlsx_data/xl_combinada.xlsx'
+            'xl_combi':'../data/xlsx_data/xl_combinada.xlsx'  # Removed redundant key
+
+
         }
         
         # Atualiza caminhos baseados no diretório raiz
@@ -42,7 +44,10 @@ class DIR:
     def update_paths(self):
         """Atualiza todos os caminhos relativos para caminhos absolutos baseados no diretório raiz."""
         for key, relative_path in self.dirs.items():
-            setattr(self, key, os.path.join(self.root, relative_path))
+            if not os.path.isabs(relative_path):
+                setattr(self, key, os.path.join(self.root, relative_path))
+            else:
+                setattr(self, key, relative_path)
 
 class EmptyFileMaker:
     

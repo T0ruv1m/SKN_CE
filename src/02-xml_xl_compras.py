@@ -22,10 +22,12 @@ def extract_data_from_xml(xml_file):
         xMun_text = xMun_element.text if xMun_element is not None else None
 
         infCpl_element = root.find('.//nfe:infAdic/nfe:infCpl', namespaces)
-        infCpl_text = infCpl_element.text if infCpl_element is not None else ''
+        infCpl_text = infCpl_element.text if infCpl_element is not None else 
 
         number_match = re.search(r'\b\d{44}\b', infCpl_text)
         extracted_number = number_match.group(0) if number_match else None
+        
+        # Uncomment and fix logic for `last_semicolon_text` if necessary
         '''
         last_semicolon_text = infCpl_text.split(';')[-1].strip() if ';' in infCpl_text else None
 
@@ -39,13 +41,14 @@ def extract_data_from_xml(xml_file):
             infCpl_match = re.search(pattern, infCpl_text)
             last_semicolon_text = infCpl_match.group(1).strip() if infCpl_match else None
         '''
+
         vProd_element = root.find('.//nfe:total/nfe:ICMSTot/nfe:vProd', namespaces)
         vProd_text = vProd_element.text if vProd_element is not None else None
 
         return extracted_number, chNTR_text, xMun_text, vProd_text
     except ET.ParseError:
         print(f"Error parsing XML file: {xml_file}")
-        return None, None, None, None, None
+        return None, None, None, None
 
 def load_new_files_list(csv_file_path):
     """Load the list of new XML files to process from a CSV file."""
@@ -63,11 +66,11 @@ def load_existing_data(excel_file_path):
     if os.path.exists(excel_file_path):
         return pd.read_excel(excel_file_path)
     else:
-        return pd.DataFrame(columns=['file_name', 'chNF', 'chNTR', 'xMun', 'Fornecedor', 'vProd'])
+        return pd.DataFrame(columns=['file_name', 'chNF', 'chNTR', 'xMun', 'vProd'])
 
 def build_xml_file_mapping(new_files, existing_data):
     """Build a dictionary mapping XML file names to their extracted values, avoiding duplicates."""
-    xml_data = {'file_name': [], 'chNF': [], 'chNTR': [], 'xMun': [], 'Fornecedor': [], 'vProd': []}
+    xml_data = {'file_name': [], 'chNF': [], 'chNTR': [], 'xMun': [], 'vProd': []}
 
     for xml_file_path in new_files:
         if not os.path.exists(xml_file_path):
@@ -82,13 +85,12 @@ def build_xml_file_mapping(new_files, existing_data):
             print(f"File already processed: {file_name_without_ext}")
             continue
 
-        extracted_number, chNTR_text, xMun_text, last_semicolon_text, vProd_text = extract_data_from_xml(xml_file_path)
+        extracted_number, chNTR_text, xMun_text, vProd_text = extract_data_from_xml(xml_file_path)
 
         xml_data['file_name'].append(file_name_without_ext)
         xml_data['chNF'].append(extracted_number)
         xml_data['chNTR'].append(chNTR_text)
         xml_data['xMun'].append(xMun_text)
-        # xml_data['Fornecedor'].append(last_semicolon_text)
         xml_data['vProd'].append(vProd_text)
 
     return xml_data

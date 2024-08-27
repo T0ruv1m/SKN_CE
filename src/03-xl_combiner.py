@@ -28,19 +28,21 @@ class ExcelMerger:
         # Carrega os dados dos arquivos Excel
         df1 = pd.read_excel(self.file1_path)
         df2 = pd.read_excel(self.file2_path)
-        df2_selected = df2[['chNTR','nNF']]
-        
+        print(df1)
+        print(df2)
+
         # Realiza a junção com base na coluna especificada
-        merged_df = pd.merge(df1, df2, on=self.merge_column)
-        merged_df = pd.merge(merged_df, df2_selected, left_on='chNF', right_on='chNTR')  
-        merged_df = merged_df[['xMun','Fornecedor','chNTR_x','nNF_x','chNF','nNF_y','vProd','dhEmi']].rename(columns={
+        merged_df = pd.merge(df1, df2, on=self.merge_column, how='left')
+        merged_df = pd.merge(merged_df, df2, left_on='chNF', right_on='chNTR')  
+        
+        merged_df = merged_df[['xMun','chNTR_x','nNF_x','chNF','nNF_y','vProd','xFant_y','dhEmi_x']].rename(columns={
             'xMun':'Municipio',
-            'Fornecedor':'FOR',
+            'xFant_y' : 'FOR',
             'chNTR_x':'chNTR',
             'nNF_x': 'nNTR',
             'nNF_y': 'nNF',
             'vProd': 'Valor',
-            'dhEmi': 'Ano'
+            'dhEmi_x': 'Ano'
         })
         
         #df2['nNF'] = df2['nNF'].astype(str)
@@ -57,7 +59,7 @@ if __name__ == "__main__":
     file1 = path_to.xl_compras
     file2 = path_to.xl_gestor
     column_to_merge_on = 'chNTR'  # Nome da coluna usada para a junção
-    output_file = path_to.xl_combinada
+    output_file = path_to.xl_combi
     
 
     merger = ExcelMerger(file1, file2, column_to_merge_on, output_file)
