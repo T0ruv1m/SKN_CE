@@ -30,6 +30,43 @@ def count_pdfs_in_subfolders(base_folder):
     return folder_counts
 
 
+def start_merging_routine(dir, log_callback=None, progress_callback=None):
+    """Starts the PDF merging process with error handling."""
+    try:
+        excel_file = dir.xl_combi
+        folder_path = dir.gestor_data
+        output_folder = dir.mesc
+        column1 = 'chNF'
+        column2 = 'chNTR'
+        year_column = 'Ano'
+        folder_column = 'Municipio'
+        suffix_column1 = 'FOR'
+        suffix_column2 = 'Valor'
+        nNF_column = 'nNF'
+        merged_files_json = dir.merged_files_json  # Path to the JSON file to track merged files
+        
+        os.makedirs(output_folder, exist_ok=True)
+    
+        total_files = len([f for f in os.listdir(folder_path) if f.endswith(".pdf")])
+        if progress_callback:
+            progress_callback(0, total_files)
+        
+        missing_files = set()
+        find_and_merge_pdfs(
+            excel_file, folder_path, column1, column2, output_folder, 
+            year_column, folder_column, suffix_column1, suffix_column2, nNF_column, 
+            abbrev_length=3, log_callback=log_callback, 
+            progress_callback=progress_callback, total_files=total_files,
+            missing_files_set=missing_files, merged_files_json=merged_files_json
+        )
+        if log_callback:
+            log_callback(f"Total de arquivos PDF ausentes: {len(missing_files)}")
+
+    except Exception as e:
+        if log_callback:
+            log_callback(f"Erro ao iniciar o processo de mesclagem: {e}")
+
+
 def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder, year_column, folder_column, suffix_column1, suffix_column2, nNF_column, abbrev_length=5, log_callback=None, progress_callback=None, total_files=0, missing_files_set=None, merged_files_json=None):
     """Finds, merges, and names PDF files based on Excel data."""
 
@@ -67,7 +104,7 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
                 year = str(row[year_column])
                 subfolder_name = str(row[folder_column])
 
-                suffix1 = str(row[suffix_column1])[:abbrev_length]
+                suffix1 = str(row[suffix_column1])[:abbrev_length].upper()
                 value = row[suffix_column2]
                 suffix2 = f"{value:.2f}".replace('.', '-')
 
@@ -129,3 +166,4 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
     except Exception as e:
         if log_callback:
             log_callback(f"Erro ao buscar e mesclar PDFs: {e}")
+

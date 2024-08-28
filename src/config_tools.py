@@ -14,7 +14,7 @@ class DIR:
             'dig': '../docs/digitalizados',
             'res': '../docs/registro',
             'reg': '../docs/residuo',
-            'mesc': 'I:\Meu Drive\docs',
+            'mesc': 'I:\Drives compartilhados\Compartilhamento Registro de liquidação',
             
             'xml_data': '\\\\Mimitop\\02334933000140',  # UNC path with double backslashes
             'gestor_data': 'I:/.shortcut-targets-by-id/1ghlKQQOndN3wMxNW4qM3pTPDbtrYJmTa/GestorDFe/Documentos/CONSORCIO INTERMUNICIPAL DE SAUDE ALTO DAS VERTENTES',

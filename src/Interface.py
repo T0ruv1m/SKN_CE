@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk, scrolledtext
 import threading
 from config_tools import DIR
-from pdf_merge_routines import find_and_merge_pdfs
+from pdf_merge_routines import start_merging_routine
 
 
 class PDFMergerApp:
@@ -13,7 +13,7 @@ class PDFMergerApp:
         self.root.title("PDF Merger")
 
         # Configure the main window
-        self.root.geometry('900x400')
+        self.root.geometry('850x400')
 
         # Create a frame for the progress bar
         self.progress_frame = tk.Frame(self.root)
@@ -48,39 +48,17 @@ class PDFMergerApp:
 
     def start_thread(self):
         """Starts the merging process in a separate thread."""
-        threading.Thread(target=self.start_merging).start()
+        threading.Thread(target=self.run_merging).start()
 
-    def start_merging(self):
-        """Starts the PDF merging process with error handling."""
+    def run_merging(self):
+        """Runs the PDF merging process."""
         try:
             dir = DIR()
-
-            excel_file = dir.xl_combi
-            folder_path = dir.gestor_data
-            output_folder = dir.mesc
-            column1 = 'chNF'
-            column2 = 'chNTR'
-            year_column = 'Ano'
-            folder_column = 'Municipio'
-            suffix_column1 = 'FOR'
-            suffix_column2 = 'Valor'
-            nNF_column = 'nNF'
-            merged_files_json = dir.merged_files_json  # Path to the JSON file to track merged files
-            
-            os.makedirs(output_folder, exist_ok=True)
-        
-            total_files = len([f for f in os.listdir(folder_path) if f.endswith(".pdf")])
-            self.update_progress(0, total_files)
-            
-            self.missing_files = set()
-            find_and_merge_pdfs(
-                excel_file, folder_path, column1, column2, output_folder, 
-                year_column, folder_column, suffix_column1, suffix_column2, nNF_column, 
-                abbrev_length=3, log_callback=self.log, 
-                progress_callback=self.update_progress, total_files=total_files,
-                missing_files_set=self.missing_files, merged_files_json=merged_files_json  # Pass the merged files JSON
+            start_merging_routine(
+                dir=dir,
+                log_callback=self.log,
+                progress_callback=self.update_progress
             )
-            self.log(f"Total de arquivos PDF ausentes: {len(self.missing_files)}")
 
         except Exception as e:
             self.log(f"Erro ao iniciar o processo de mesclagem: {e}")
