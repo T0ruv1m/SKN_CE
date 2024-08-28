@@ -69,7 +69,7 @@ def start_merging_routine(dir, log_callback=None, progress_callback=None):
 
 def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder, year_column, folder_column, suffix_column1, suffix_column2, nNF_column, abbrev_length=5, log_callback=None, progress_callback=None, total_files=0, missing_files_set=None, merged_files_json=None):
     """Finds, merges, and names PDF files based on Excel data."""
-
+    
     try:
         # Load already merged files from JSON if it exists
         if merged_files_json and os.path.exists(merged_files_json):
@@ -80,13 +80,19 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
 
         df = pd.read_excel(excel_file)
         pdf_files = {}
+        complementary_files = {}
 
+        # Walk through all files and classify them
         for root, dirs, files in os.walk(folder_path):
             for file in files:
                 if file.endswith(".pdf"):
                     file_name = os.path.splitext(file)[0]
                     file_path = os.path.join(root, file)
-                    pdf_files[file_name] = file_path
+                    
+                    if "CCe" in os.path.basename(root):  # Check if the file is in a CCe subfolder
+                        complementary_files[file_name] = file_path
+                    else:
+                        pdf_files[file_name] = file_path
 
         processed_files = 0
         total_rows = len(df)
@@ -121,7 +127,22 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
                 file1_path = pdf_files.get(file1)
                 file2_path = pdf_files.get(file2)
 
-                if file1_path and file2_path:
+                # Handle possible complementary files from the "CCe" subfolder
+                file1_complementary = complementary_files.get(file1)
+                file2_complementary = complementary_files.get(file2)
+                
+                pdf_list = []
+                if file1_path:
+                    pdf_list.append(file1_path)
+                if file2_path:
+                    pdf_list.append(file2_path)
+                
+                if file1_complementary:
+                    pdf_list.append(file1_complementary)
+                if file2_complementary:
+                    pdf_list.append(file2_complementary)
+
+                if pdf_list:
                     year_path = os.path.join(output_folder, year)
                     os.makedirs(year_path, exist_ok=True)
 
@@ -129,13 +150,13 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
                     os.makedirs(subfolder_path, exist_ok=True)
 
                     output_path = os.path.join(subfolder_path, output_filename)
-                    merge_pdfs([file1_path, file2_path], output_path)
+                    merge_pdfs(pdf_list, output_path)
                     
                     merged_files.append(output_filename)  # Track the merged file
                     if log_callback:
-                        log_callback(f"Mesclando {file1} e {file2}")
+                        log_callback(f"Mesclando {file1} e {file2} {'com arquivos complementares' if len(pdf_list) > 2 else ''}")
                     
-                    processed_files += 2
+                    processed_files += len(pdf_list)
 
                     if progress_callback:
                         progress_callback(index + 1, total_rows)
