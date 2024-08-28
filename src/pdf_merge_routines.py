@@ -52,6 +52,7 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
                     pdf_files[file_name] = file_path
 
         processed_files = 0
+        total_rows = len(df)
 
         for index, row in df.iterrows():
             try:
@@ -100,7 +101,7 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
                     processed_files += 2
 
                     if progress_callback:
-                        progress_callback(processed_files, total_files)
+                        progress_callback(index + 1, total_rows)
                 else:
                     missing_files = []
                     if not file1_path:

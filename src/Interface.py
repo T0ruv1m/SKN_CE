@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 from tkinter import ttk, scrolledtext
 import threading
-from config_tools import DIR, EmptyFileMaker
+from config_tools import DIR
 from pdf_merge_routines import find_and_merge_pdfs
 
 
@@ -92,8 +92,5 @@ def main():
     root.mainloop()
 
 
-if __name__ == "__main__": 
-    file = EmptyFileMaker('./root/merged_files.json')
-    file.empty_file()
+if __name__ == "__main__":
     main()
-
