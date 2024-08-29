@@ -5,6 +5,7 @@ from config_tools import DIR
 import re
 import pandas as pd
 
+
 def extract_data_from_xml(xml_file):
     """Extract texts from XML elements."""
     try:
@@ -22,7 +23,7 @@ def extract_data_from_xml(xml_file):
         xMun_text = xMun_element.text if xMun_element is not None else None
 
         infCpl_element = root.find('.//nfe:infAdic/nfe:infCpl', namespaces)
-        infCpl_text = infCpl_element.text if infCpl_element is not None else 
+        infCpl_text = infCpl_element.text if infCpl_element is not None else None
 
         number_match = re.search(r'\b\d{44}\b', infCpl_text)
         extracted_number = number_match.group(0) if number_match else None
