@@ -5,7 +5,7 @@ import threading
 from config_tools import DIR
 from XML_Handler import XMLProcessor, ExcelMerger
 from pdf_merge_routines import start_merging_routine
-from xml_cache_controller import XMLFileProcessor
+from xml_cache_controller import XMLFileProcessor, CacheManager
 
 class PDFMergerApp:
     def __init__(self, root):
@@ -13,7 +13,7 @@ class PDFMergerApp:
         self.root.title("Multi-Routine Processor")
 
         # Configure the main window
-        self.root.geometry('850x400')
+        self.root.geometry('750x400')
 
         # Create a logger
         self.logger_frame = tk.Frame(self.root)
@@ -31,25 +31,28 @@ class PDFMergerApp:
         self.auto_pipeline_button.pack(side=tk.LEFT, padx=5)
 
         # Create buttons for different routines, side by side
-        self.scan_xml_files_button = tk.Button(self.button_frame, text="Scan XML Files", command=self.start_scan_xml_thread)
+        self.clear_cache_button = tk.Button(self.button_frame, text="Clear Cache", command=self.clear_cache_thread)
+        self.clear_cache_button.pack(side=tk.LEFT, padx=5)
+        
+        self.scan_xml_files_button = tk.Button(self.button_frame, text="Varredura XML", command=self.start_scan_xml_thread)
         self.scan_xml_files_button.pack(side=tk.LEFT, padx=5)
 
-        self.xml_gestor_button = tk.Button(self.button_frame, text="Process XML - Gestor", command=self.start_xml_gestor_thread)
+        self.xml_gestor_button = tk.Button(self.button_frame, text="Extrair XML|Gestor", command=self.start_xml_gestor_thread)
         self.xml_gestor_button.pack(side=tk.LEFT, padx=5)
 
-        self.xml_compras_button = tk.Button(self.button_frame, text="Process XML - Compras", command=self.start_xml_compras_thread)
+        self.xml_compras_button = tk.Button(self.button_frame, text="Extrair XML|Compras", command=self.start_xml_compras_thread)
         self.xml_compras_button.pack(side=tk.LEFT, padx=5)
 
-        self.excel_merge_button = tk.Button(self.button_frame, text="Merge Excel Files", command=self.start_excel_merge_thread)
+        self.excel_merge_button = tk.Button(self.button_frame, text="Mesclar Excel", command=self.start_excel_merge_thread)
         self.excel_merge_button.pack(side=tk.LEFT, padx=5)
 
-        self.merge_button = tk.Button(self.button_frame, text="Start PDF Merge", command=self.start_merge_thread)
+        self.merge_button = tk.Button(self.button_frame, text="Fusão PDFs", command=self.start_merge_thread)
         self.merge_button.pack(side=tk.LEFT, padx=5)
 
         # Create a progress bar (only for PDF merging)
         self.progress_frame = tk.Frame(self.root)
         self.progress_frame.pack(fill=tk.X, padx=10, pady=5)
-        self.progress = ttk.Progressbar(self.progress_frame, orient=tk.HORIZONTAL, length=580, mode='determinate')
+        self.progress = ttk.Progressbar(self.progress_frame, orient=tk.HORIZONTAL, length=700, mode='determinate')
         self.progress.pack(pady=5)
 
     def log(self, message):
@@ -204,7 +207,29 @@ class PDFMergerApp:
             current_index = button_sequence.index(current_button)
             if current_index < len(button_sequence) - 1:
                 next_button = button_sequence[current_index + 1]
+
                 next_button.invoke()
+
+    def clear_cache_thread(self):
+        """Starts the cache clearing process in a separate thread."""
+        self.disable_buttons()
+        threading.Thread(target=self.run_clear_cache).start()
+
+    def run_clear_cache(self):
+        """Runs the cache clearing process."""
+        try:
+            dir = DIR()
+            cache = CacheManager()
+            cache.clear_cache_files(dir.cache_gestor)
+            cache.clear_cache_files(dir.cache_gestor)
+            cache.clear_cache_files(dir.new_compras)
+            cache.clear_cache_files(dir.new_gestor)
+
+            self.log("Cache clearing completed successfully.")
+        except Exception as e:
+            self.log(f"Error clearing cache files: {e}")
+        finally:
+            self.enable_buttons()
 
 def main():
     root = tk.Tk()

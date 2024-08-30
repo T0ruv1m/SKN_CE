@@ -91,6 +91,21 @@ class XMLFileProcessor:
             print("No new or modified files found.")
         self.cache.save_cache()
 
+class CacheManager:
+    """Manages cache-related tasks."""
+
+    @staticmethod
+    def clear_cache_files(cache_file):
+        """Clear all cache files in the root folder, including merged_files.json."""
+        try:
+            if os.path.exists(cache_file):
+                os.remove(cache_file)
+                print(f"Deleted cache file: {cache_file}")
+            else:
+                print(f"Cache file not found: {cache_file}")
+
+        except Exception as e:
+            print(f"Error clearing cache files: {e}")
 
 # Example usage:
 if __name__ == "__main__":
