@@ -66,7 +66,6 @@ def start_merging_routine(dir, log_callback=None, progress_callback=None):
         if log_callback:
             log_callback(f"Erro ao iniciar o processo de mesclagem: {e}")
 
-
 def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder, year_column, folder_column, suffix_column1, suffix_column2, nNF_column, abbrev_length=5, log_callback=None, progress_callback=None, total_files=0, missing_files_set=None, merged_files_json=None):
     """Finds, merges, and names PDF files based on Excel data."""
     
@@ -95,6 +94,7 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
                         pdf_files[file_name] = file_path
 
         processed_files = 0
+        successfully_merged_count = 0  # Counter for successfully merged files
         total_rows = len(df)
 
         for index, row in df.iterrows():
@@ -153,6 +153,7 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
                     merge_pdfs(pdf_list, output_path)
                     
                     merged_files.append(output_filename)  # Track the merged file
+                    successfully_merged_count += 1  # Increment the counter for each successful merge
                     if log_callback:
                         log_callback(f"Mesclando {file1} e {file2} {'com arquivos complementares' if len(pdf_list) > 2 else ''}")
                     
@@ -182,9 +183,8 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
             json.dump(merged_files, json_file)
 
         if log_callback:
-            log_callback("Mesclagem concluída.")
+            log_callback(f"Mesclagem concluída. Total de arquivos mesclados nesta execução: {successfully_merged_count}")
 
     except Exception as e:
         if log_callback:
             log_callback(f"Erro ao buscar e mesclar PDFs: {e}")
-

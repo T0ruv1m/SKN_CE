@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk, scrolledtext
 import threading
 from config_tools import DIR
-from XML_Handler import XMLProcessor, ExcelMerger
+from xml_handler import XMLProcessor, ExcelMerger
 from pdf_merge_routines import start_merging_routine
 from xml_cache_controller import XMLFileProcessor, CacheManager
 
