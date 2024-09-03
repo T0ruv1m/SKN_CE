@@ -43,7 +43,6 @@ class FileMetadataCache:
         """Update the cache with the latest timestamp for the file."""
         self.cache_data[file_name] = timestamp
 
-
 class XMLFileProcessor:
     """Processes XML files and handles caching of file metadata."""
 
