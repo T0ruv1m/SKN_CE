@@ -29,12 +29,12 @@ def count_pdfs_in_subfolders(base_folder):
         raise RuntimeError(f"Erro ao contar PDFs nas subpastas: {e}")
     return folder_counts
 
-
 def start_merging_routine(dir, log_callback=None, progress_callback=None):
     """Starts the PDF merging process with error handling."""
     try:
         excel_file = dir.xl_combi
-        folder_path = dir.gestor_data
+        folder_path_gestor = dir.gestor_data
+        folder_path_chNTR = dir.chNTR_data  
         output_folder = dir.mesc
         column1 = 'chNF'
         column2 = 'chNTR'
@@ -43,17 +43,18 @@ def start_merging_routine(dir, log_callback=None, progress_callback=None):
         suffix_column1 = 'FOR'
         suffix_column2 = 'Valor'
         nNF_column = 'nNF'
-        merged_files_json = dir.merged_files_json  # Path to the JSON file to track merged files
+        merged_files_json = dir.merged_files_json
         
         os.makedirs(output_folder, exist_ok=True)
     
-        total_files = len([f for f in os.listdir(folder_path) if f.endswith(".pdf")])
+        total_files = len([f for f in os.listdir(folder_path_gestor) if f.endswith(".pdf")]) + \
+                      len([f for f in os.listdir(folder_path_chNTR) if f.endswith(".pdf")])
         if progress_callback:
             progress_callback(0, total_files)
         
         missing_files = set()
         find_and_merge_pdfs(
-            excel_file, folder_path, column1, column2, output_folder, 
+            excel_file, folder_path_gestor, folder_path_chNTR, column1, column2, output_folder, 
             year_column, folder_column, suffix_column1, suffix_column2, nNF_column, 
             abbrev_length=3, log_callback=log_callback, 
             progress_callback=progress_callback, total_files=total_files,
@@ -66,7 +67,7 @@ def start_merging_routine(dir, log_callback=None, progress_callback=None):
         if log_callback:
             log_callback(f"Erro ao iniciar o processo de mesclagem: {e}")
 
-def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder, year_column, folder_column, suffix_column1, suffix_column2, nNF_column, abbrev_length=5, log_callback=None, progress_callback=None, total_files=0, missing_files_set=None, merged_files_json=None):
+def find_and_merge_pdfs(excel_file, folder_path_gestor, folder_path_chNTR, column1, column2, output_folder, year_column, folder_column, suffix_column1, suffix_column2, nNF_column, abbrev_length=5, log_callback=None, progress_callback=None, total_files=0, missing_files_set=None, merged_files_json=None):
     """Finds, merges, and names PDF files based on Excel data."""
     
     try:
@@ -78,23 +79,35 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
             merged_files = []
 
         df = pd.read_excel(excel_file)
-        pdf_files = {}
+        pdf_files_gestor = {}
+        pdf_files_chNTR = {}
         complementary_files = {}
 
-        # Walk through all files and classify them
-        for root, dirs, files in os.walk(folder_path):
+        # Walk through gestor files
+        for root, dirs, files in os.walk(folder_path_gestor):
             for file in files:
                 if file.endswith(".pdf"):
                     file_name = os.path.splitext(file)[0]
                     file_path = os.path.join(root, file)
                     
-                    if "CCe" in os.path.basename(root):  # Check if the file is in a CCe subfolder
+                    if "CCe" in os.path.basename(root):
                         complementary_files[file_name] = file_path
                     else:
-                        pdf_files[file_name] = file_path
+                        pdf_files_gestor[file_name] = file_path
+
+        # Walk through chNTR files
+        for root, dirs, files in os.walk(folder_path_chNTR):
+            for file in files:
+                if file.endswith(".pdf"):
+                    file_name = os.path.splitext(file)[0]
+                    # Remove "-nfe" suffix if present
+                    if file_name.endswith("-nfe"):
+                        file_name = file_name[:-4]
+                    file_path = os.path.join(root, file)
+                    pdf_files_chNTR[file_name] = file_path
 
         processed_files = 0
-        successfully_merged_count = 0  # Counter for successfully merged files
+        successfully_merged_count = 0
         total_rows = len(df)
 
         for index, row in df.iterrows():
@@ -120,16 +133,13 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
                 output_filename = f"{suffix1}_{nNF_value}_{file1_last8}_{file2_last8}_{suffix2}.pdf"
                 
                 if output_filename in merged_files:
-                    if log_callback:
-                        log_callback(f"Pulando {output_filename} já mesclado.")
+                    print(f"Pulando {output_filename} já mesclado.")
                     continue
                 
-                file1_path = pdf_files.get(file1)
-                file2_path = pdf_files.get(file2)
+                file1_path = pdf_files_gestor.get(file1)
+                file2_path = pdf_files_chNTR.get(file2)  # This now matches without "-nfe" suffix
 
-                # Handle possible complementary files from the "CCe" subfolder
                 file1_complementary = complementary_files.get(file1)
-                file2_complementary = complementary_files.get(file2)
                 
                 pdf_list = []
                 if file1_path:
@@ -139,8 +149,6 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
                 
                 if file1_complementary:
                     pdf_list.append(file1_complementary)
-                if file2_complementary:
-                    pdf_list.append(file2_complementary)
 
                 if pdf_list:
                     year_path = os.path.join(output_folder, year)
@@ -152,10 +160,9 @@ def find_and_merge_pdfs(excel_file, folder_path, column1, column2, output_folder
                     output_path = os.path.join(subfolder_path, output_filename)
                     merge_pdfs(pdf_list, output_path)
                     
-                    merged_files.append(output_filename)  # Track the merged file
-                    successfully_merged_count += 1  # Increment the counter for each successful merge
-                    if log_callback:
-                        log_callback(f"Mesclando {file1} e {file2} {'com arquivos complementares' if len(pdf_list) > 2 else ''}")
+                    merged_files.append(output_filename)
+                    successfully_merged_count += 1
+                    print(f"Mesclando {file1} e {file2} {'com arquivos complementares' if len(pdf_list) > 2 else ''}")
                     
                     processed_files += len(pdf_list)
 

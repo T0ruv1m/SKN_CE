@@ -160,7 +160,7 @@ class ExcelMerger:
         print(df2)
 
         # Realiza a junção com base na coluna especificada
-        merged_df = pd.merge(df1, df2, on=self.merge_column, how='left')
+        merged_df = pd.merge(df1, df2, on=self.merge_column, how='outer')
         merged_df = pd.merge(merged_df, df2, left_on='chNF', right_on='chNTR')  
         
         merged_df = merged_df[['xMun','chNTR_x','nNF_x','chNF','nNF_y','vProd','xFant_y','dhEmi_x']].rename(columns={
