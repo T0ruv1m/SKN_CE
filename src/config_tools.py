@@ -15,8 +15,8 @@ class DIR:
             'reg': '../docs/residuo',
             'mesc': 'I:\\Drives compartilhados\\Compartilhamento Registro de liquidação',
             
-            'xml_data': '\\\\Mimitop\\02334933000140',  # UNC path with double backslashes
-            'xml_data2': 'I:\\Outros computadores\MIMI\\Arqs\\02334933000140',
+            #'xml_data': '\\\\Mimitop\\02334933000140',  # UNC path with double backslashes
+            'xml_data': 'I:\\Outros computadores\MIMI\\Arqs\\02334933000140',
             'gestor_data': 'I:/.shortcut-targets-by-id/1ghlKQQOndN3wMxNW4qM3pTPDbtrYJmTa/GestorDFe/Documentos/CONSORCIO INTERMUNICIPAL DE SAUDE ALTO DAS VERTENTES',
             'chNTR_data': '\\\\Mimitop\\PDF',
             'chNTR_data2': 'I:\\Outros computadores\\MIMI\\PDF',

@@ -2,7 +2,8 @@ import os
 import csv
 from datetime import datetime
 from config_tools import DIR
-
+import pandas as pd
+import re
 
 class FileMetadataCache:
     """Manages the file metadata cache for efficient XML processing."""
@@ -67,6 +68,10 @@ class XMLFileProcessor:
         for root, dirs, files in os.walk(self.directory):
             for file in files:
                 if file.lower().endswith('.xml'):
+                    # Skip files containing "-procEvento" followed by "NFe.xml" at the end
+                    if re.search(r'-procEvento.*NFe\.xml$', file, re.IGNORECASE):
+                        continue
+                    
                     file_path = os.path.join(root, file)
                     file_name, timestamp = self.get_file_metadata(file_path)
                     if file_name and self.cache.is_file_new_or_modified(file_name, timestamp):
@@ -77,18 +82,27 @@ class XMLFileProcessor:
     def process_new_files(self, csv_file):
         """Process new or modified XML files and save the details to a CSV file."""
         new_files = self.scan_for_new_files()
-        if new_files:
+        
+        # Filter out files containing "-procEvento" in their names
+        filtered_files = [
+            file for file in new_files 
+            if not re.search(r'-procEvento.*NFe\.xml$', file['file_name'], re.IGNORECASE)
+        ]
+        
+        if filtered_files:
             try:
                 with open(csv_file, 'w', newline='') as f:
                     writer = csv.DictWriter(f, fieldnames=['file_name', 'file_path', 'timestamp'])
                     writer.writeheader()
-                    writer.writerows(new_files)
+                    writer.writerows(filtered_files)
                 print(f"New file details saved to: {csv_file}")
             except Exception as e:
                 print(f"Error saving new files to CSV: {e}")
         else:
-            print("No new or modified files found.")
+            print("No new or modified files found (excluding files with '-procEvento' in the name).")
+        
         self.cache.save_cache()
+    
 
 class CacheManager:
     """Manages cache-related tasks."""
@@ -105,6 +119,7 @@ class CacheManager:
 
         except Exception as e:
             print(f"Error clearing cache files: {e}")
+
 
 # Example usage:
 if __name__ == "__main__":

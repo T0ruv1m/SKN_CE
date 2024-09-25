@@ -15,7 +15,6 @@ def merge_pdfs(pdf_list, output_path):
     except Exception as e:
         raise RuntimeError(f"Erro ao mesclar PDFs: {e}")
 
-
 def count_pdfs_in_subfolders(base_folder):
     """Counts the number of PDFs in each subfolder of base_folder."""
     folder_counts = {}

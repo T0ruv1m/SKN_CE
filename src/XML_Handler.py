@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 import csv
 import pandas as pd
 import re
+import logging
 from config_tools import DIR
 
 class XMLProcessor:
@@ -85,9 +86,13 @@ class XMLProcessor:
 
         xml_data = {col: [] for col in columns}
 
+        # Configure logging
+        logging.basicConfig(filename='xml_processing.log', level=logging.ERROR, 
+                            format='%(asctime)s - %(levelname)s - %(message)s')
+
         for xml_file_path in new_files:
             if not os.path.exists(xml_file_path):
-                print(f"File not found: {xml_file_path}")
+                logging.error(f"File not found: {xml_file_path}")
                 continue
 
             print(f"Processing file: {xml_file_path}")
@@ -100,21 +105,28 @@ class XMLProcessor:
                 print(f"File already processed: {file_name_without_ext}")
                 continue
 
-            extracted_data = self.extract_data_from_xml(xml_file_path, extraction_type=extraction_type)
+            try:
+                extracted_data = self.extract_data_from_xml(xml_file_path, extraction_type=extraction_type)
 
-            if extraction_type == 'gestor':
-                nnf_text, dhEmi_text, xFant_text = extracted_data
-                xml_data['chNTR'].append(file_name_without_ext)
-                xml_data['nNF'].append(nnf_text)
-                xml_data['dhEmi'].append(dhEmi_text)
-                xml_data['xFant'].append(xFant_text)
-            else:  # compras
-                extracted_number, chNTR_text, xMun_text, vProd_text = extracted_data
-                xml_data['file_name'].append(file_name_without_ext)
-                xml_data['chNF'].append(extracted_number)
-                xml_data['chNTR'].append(chNTR_text)
-                xml_data['xMun'].append(xMun_text)
-                xml_data['vProd'].append(vProd_text)
+                if extraction_type == 'gestor':
+                    nnf_text, dhEmi_text, xFant_text = extracted_data
+                    xml_data['chNTR'].append(file_name_without_ext)
+                    xml_data['nNF'].append(nnf_text)
+                    xml_data['dhEmi'].append(dhEmi_text)
+                    xml_data['xFant'].append(xFant_text)
+                else:  # compras
+                    extracted_number, chNTR_text, xMun_text, vProd_text = extracted_data
+                    xml_data['file_name'].append(file_name_without_ext)
+                    xml_data['chNF'].append(extracted_number)
+                    xml_data['chNTR'].append(chNTR_text)
+                    xml_data['xMun'].append(xMun_text)
+                    xml_data['vProd'].append(vProd_text)
+            except ValueError as e:
+                logging.error(f"Error extracting data from file {xml_file_path}: {str(e)}")
+                continue
+            except Exception as e:
+                logging.error(f"Unexpected error processing file {xml_file_path}: {str(e)}")
+                continue
 
         return xml_data
 

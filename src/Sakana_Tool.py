@@ -103,20 +103,29 @@ class PDFMergerApp:
         self.disable_buttons()
         threading.Thread(target=self.run_scan_xml_files).start()
 
-    def run_merging(self):
-        """Runs the PDF merging process."""
+    def run_scan_xml_files(self):
+        """Runs the XML scanning process for new or modified files."""
         try:
-            dir = DIR()
-            start_merging_routine(
-                dir=dir,
-                log_callback=self.log,
-                progress_callback=self.update_progress
-            )
+            path_to = DIR()
+            
+            processor = XMLFileProcessor(path_to.xml_data, path_to.cache_compras)
+            processor.process_new_files(path_to.new_compras)
+
+            self.log("XML scanning completed successfully.")
         except Exception as e:
-            self.log(f"Erro ao iniciar o processo de mesclagem: {e}")
+            self.log(f"Error scanning XML files: {e}")
+            processor = XMLFileProcessor(path_to.xml_data2,path_to.cache_compras)
+
+        try:
+            gestor_processor = XMLFileProcessor(path_to.gestor_data, path_to.cache_gestor)
+            gestor_processor.process_new_files(path_to.new_gestor)
+        except Exception as e:
+            self.log(f"Erro escaneando arquivos do gestor: {e}")
+            gestor_processor = XMLFileProcessor(path_to.gestor_data, path_to.cache_gestor)
+            gestor_processor.process_new_files(path_to.new_gestor)
         finally:
             self.enable_buttons()
-            self.check_auto_pipeline(self.merge_button)
+            self.check_auto_pipeline(self.scan_xml_files_button)
 
     def run_xml_gestor_processing(self):
         """Runs the XML processing for Gestor."""
@@ -150,7 +159,6 @@ class PDFMergerApp:
             existing_data_compras = processor.load_existing_data(xl_compras, ['file_name', 'chNF', 'chNTR', 'xMun', 'vProd'])
             xml_data_compras = processor.build_xml_file_mapping(new_files_compras, existing_data_compras, extraction_type='compras')
             processor.save_xml_data_to_excel(xml_data_compras, xl_compras, ['file_name', 'chNF', 'chNTR', 'xMun', 'vProd'])
-
             self.log("XML Compras processing completed successfully.")
         except Exception as e:
             self.log(f"Error processing XML Compras: {e}")
@@ -176,23 +184,24 @@ class PDFMergerApp:
         finally:
             self.enable_buttons()
             self.check_auto_pipeline(self.excel_merge_button)
-
-    def run_scan_xml_files(self):
-        """Runs the XML scanning process for new or modified files."""
+    
+    def run_merging(self):
+        """Runs the PDF merging process."""
         try:
-            path_to = DIR()
-            processor = XMLFileProcessor(path_to.xml_data, path_to.cache_compras)
-            processor.process_new_files(path_to.new_compras)
-
-            gestor_processor = XMLFileProcessor(path_to.gestor_data, path_to.cache_gestor)
-            gestor_processor.process_new_files(path_to.new_gestor)
-
-            self.log("XML scanning completed successfully.")
+            dir = DIR()
+            start_merging_routine(
+                dir=dir,
+                log_callback=self.log,
+                progress_callback=self.update_progress
+            )
         except Exception as e:
-            self.log(f"Error scanning XML files: {e}")
+            self.log(f"Erro ao iniciar o processo de mesclagem: {e}")
         finally:
             self.enable_buttons()
-            self.check_auto_pipeline(self.scan_xml_files_button)
+            self.check_auto_pipeline(self.merge_button)
+
+   
+    
 
     def check_auto_pipeline(self, current_button):
         """Check if auto-pipeline is enabled and trigger the next button."""
@@ -224,6 +233,7 @@ class PDFMergerApp:
             cache.clear_cache_files(dir.cache_gestor)
             cache.clear_cache_files(dir.new_compras)
             cache.clear_cache_files(dir.new_gestor)
+            cache.clear_cache_files(dir.cache_compras)
 
             self.log("Cache clearing completed successfully.")
         except Exception as e:
