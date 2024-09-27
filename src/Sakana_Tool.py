@@ -5,9 +5,13 @@ import threading
 from config_tools import DIR
 from xml_handler import XMLProcessor, ExcelMerger
 from pdf_merge_routines import start_merging_routine
-from xml_cache_controller import XMLFileProcessor, CacheManager
+from xml_cache_controller import XMLreading, CacheOperations
 
 class PDFMergerApp:
+    
+    #GUI:
+    
+
     def __init__(self, root):
         self.root = root
         self.root.title("Multi-Routine Processor")
@@ -78,25 +82,8 @@ class PDFMergerApp:
         for button in buttons:
             button.config(state=tk.NORMAL, bg='SystemButtonFace')
 
-    def start_merge_thread(self):
-        """Starts the PDF merging process in a separate thread."""
-        self.disable_buttons()
-        threading.Thread(target=self.run_merging).start()
 
-    def start_xml_gestor_thread(self):
-        """Starts the XML processing for Gestor in a separate thread (no progress bar)."""
-        self.disable_buttons()
-        threading.Thread(target=self.run_xml_gestor_processing).start()
-
-    def start_xml_compras_thread(self):
-        """Starts the XML processing for Compras in a separate thread (no progress bar)."""
-        self.disable_buttons()
-        threading.Thread(target=self.run_xml_compras_processing).start()
-
-    def start_excel_merge_thread(self):
-        """Starts the Excel merging process in a separate thread (no progress bar)."""
-        self.disable_buttons()
-        threading.Thread(target=self.run_excel_merging).start()
+    #Threads and respective methods:
 
     def start_scan_xml_thread(self):
         """Starts the XML scanning process in a separate thread (no progress bar)."""
@@ -104,28 +91,33 @@ class PDFMergerApp:
         threading.Thread(target=self.run_scan_xml_files).start()
 
     def run_scan_xml_files(self):
-        """Runs the XML scanning process for new or modified files."""
+        """Runs the XML scanning process for saving new or modified files to a csv."""
         try:
             path_to = DIR()
             
-            processor = XMLFileProcessor(path_to.xml_data, path_to.cache_compras)
-            processor.process_new_files(path_to.new_compras)
+            xmltocsv = XMLreading(path_to.xml_data, path_to.cache_compras)
+            xmltocsv.process_new_files(path_to.new_compras)
 
             self.log("XML scanning completed successfully.")
         except Exception as e:
             self.log(f"Error scanning XML files: {e}")
-            processor = XMLFileProcessor(path_to.xml_data2,path_to.cache_compras)
+            xmltocsv = XMLreading(path_to.xml_data2,path_to.cache_compras)
 
         try:
-            gestor_processor = XMLFileProcessor(path_to.gestor_data, path_to.cache_gestor)
+            gestor_processor = XMLreading(path_to.gestor_data, path_to.cache_gestor)
             gestor_processor.process_new_files(path_to.new_gestor)
         except Exception as e:
             self.log(f"Erro escaneando arquivos do gestor: {e}")
-            gestor_processor = XMLFileProcessor(path_to.gestor_data, path_to.cache_gestor)
+            gestor_processor = XMLreading(path_to.gestor_data, path_to.cache_gestor)
             gestor_processor.process_new_files(path_to.new_gestor)
         finally:
             self.enable_buttons()
             self.check_auto_pipeline(self.scan_xml_files_button)
+
+    def start_xml_gestor_thread(self):
+        """Starts the XML processing for Gestor in a separate thread (no progress bar)."""
+        self.disable_buttons()
+        threading.Thread(target=self.run_xml_gestor_processing).start()
 
     def run_xml_gestor_processing(self):
         """Runs the XML processing for Gestor."""
@@ -147,6 +139,11 @@ class PDFMergerApp:
             self.enable_buttons()
             self.check_auto_pipeline(self.xml_gestor_button)
 
+    def start_xml_compras_thread(self):
+        """Starts the XML processing for Compras in a separate thread (no progress bar)."""
+        self.disable_buttons()
+        threading.Thread(target=self.run_xml_compras_processing).start()
+
     def run_xml_compras_processing(self):
         """Runs the XML processing for Compras."""
         try:
@@ -166,6 +163,11 @@ class PDFMergerApp:
             self.enable_buttons()
             self.check_auto_pipeline(self.xml_compras_button)
 
+    def start_excel_merge_thread(self):
+        """Starts the Excel merging process in a separate thread (no progress bar)."""
+        self.disable_buttons()
+        threading.Thread(target=self.run_excel_merging).start()
+
     def run_excel_merging(self):
         """Runs the Excel merging process."""
         try:
@@ -184,7 +186,12 @@ class PDFMergerApp:
         finally:
             self.enable_buttons()
             self.check_auto_pipeline(self.excel_merge_button)
-    
+
+    def start_merge_thread(self):
+        """Starts the PDF merging process in a separate thread."""
+        self.disable_buttons()
+        threading.Thread(target=self.run_merging).start()
+
     def run_merging(self):
         """Runs the PDF merging process."""
         try:
@@ -199,9 +206,6 @@ class PDFMergerApp:
         finally:
             self.enable_buttons()
             self.check_auto_pipeline(self.merge_button)
-
-   
-    
 
     def check_auto_pipeline(self, current_button):
         """Check if auto-pipeline is enabled and trigger the next button."""
@@ -228,7 +232,7 @@ class PDFMergerApp:
         """Runs the cache clearing process."""
         try:
             dir = DIR()
-            cache = CacheManager()
+            cache = CacheOperations()
             cache.clear_cache_files(dir.cache_gestor)
             cache.clear_cache_files(dir.cache_gestor)
             cache.clear_cache_files(dir.new_compras)

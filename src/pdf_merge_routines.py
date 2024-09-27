@@ -4,30 +4,6 @@ import json
 from pypdf import PdfWriter
 
 
-def merge_pdfs(pdf_list, output_path):
-    """Merges PDF files from pdf_list into a single PDF at output_path."""
-    try:
-        merger = PdfWriter()
-        for pdf in pdf_list:
-            merger.append(pdf)
-        merger.write(output_path)
-        merger.close()
-    except Exception as e:
-        raise RuntimeError(f"Erro ao mesclar PDFs: {e}")
-
-def count_pdfs_in_subfolders(base_folder):
-    """Counts the number of PDFs in each subfolder of base_folder."""
-    folder_counts = {}
-    try:
-        for root, dirs, files in os.walk(base_folder):
-            for dir in dirs:
-                subfolder_path = os.path.join(root, dir)
-                num_files = len([f for f in os.listdir(subfolder_path) if f.endswith(".pdf")])
-                folder_counts[subfolder_path] = num_files
-    except Exception as e:
-        raise RuntimeError(f"Erro ao contar PDFs nas subpastas: {e}")
-    return folder_counts
-
 def start_merging_routine(dir, log_callback=None, progress_callback=None):
     """Starts the PDF merging process with error handling."""
     try:
@@ -194,3 +170,14 @@ def find_and_merge_pdfs(excel_file, folder_path_gestor, folder_path_chNTR, colum
     except Exception as e:
         if log_callback:
             log_callback(f"Erro ao buscar e mesclar PDFs: {e}")
+
+def merge_pdfs(pdf_list, output_path):
+    """Merges PDF files from pdf_list into a single PDF at output_path."""
+    try:
+        merger = PdfWriter()
+        for pdf in pdf_list:
+            merger.append(pdf)
+        merger.write(output_path)
+        merger.close()
+    except Exception as e:
+        raise RuntimeError(f"Erro ao mesclar PDFs: {e}")

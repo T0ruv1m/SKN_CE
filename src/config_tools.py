@@ -18,8 +18,8 @@ class DIR:
             #'xml_data': '\\\\Mimitop\\02334933000140',  # UNC path with double backslashes
             'xml_data': 'I:\\Outros computadores\MIMI\\Arqs\\02334933000140',
             'gestor_data': 'I:/.shortcut-targets-by-id/1ghlKQQOndN3wMxNW4qM3pTPDbtrYJmTa/GestorDFe/Documentos/CONSORCIO INTERMUNICIPAL DE SAUDE ALTO DAS VERTENTES',
-            'chNTR_data': '\\\\Mimitop\\PDF',
-            'chNTR_data2': 'I:\\Outros computadores\\MIMI\\PDF',
+            #'chNTR_data': '\\\\Mimitop\\PDF',
+            'chNTR_data': 'I:\\Outros computadores\\MIMI\\PDF',
             'timestamp': '../root/timestamp.txt',
             'credentials_file': '../root/credentials.json',
             'token_file': '../root/token.json',

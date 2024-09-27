@@ -5,7 +5,7 @@ from config_tools import DIR
 import pandas as pd
 import re
 
-class FileMetadataCache:
+class CacheCreator:
     """Manages the file metadata cache for efficient XML processing."""
 
     def __init__(self, cache_file):
@@ -44,12 +44,12 @@ class FileMetadataCache:
         """Update the cache with the latest timestamp for the file."""
         self.cache_data[file_name] = timestamp
 
-class XMLFileProcessor:
+class XMLreading:
     """Processes XML files and handles caching of file metadata."""
 
     def __init__(self, directory, cache_file):
         self.directory = directory
-        self.cache = FileMetadataCache(cache_file)
+        self.cache = CacheCreator(cache_file)
 
     def get_file_metadata(self, file_path):
         """Retrieve the last modification timestamp and file name of a file."""
@@ -103,8 +103,7 @@ class XMLFileProcessor:
         
         self.cache.save_cache()
     
-
-class CacheManager:
+class CacheOperations:
     """Manages cache-related tasks."""
 
     @staticmethod
@@ -125,8 +124,8 @@ class CacheManager:
 if __name__ == "__main__":
 
     path_to = DIR()
-    processor = XMLFileProcessor(path_to.xml_data, path_to.cache_compras)
+    processor = XMLreading(path_to.xml_data, path_to.cache_compras)
     processor.process_new_files(path_to.new_compras)
 
-    gestor_processor = XMLFileProcessor(path_to.gestor_data,path_to.cache_gestor)
+    gestor_processor = XMLreading(path_to.gestor_data,path_to.cache_gestor)
     gestor_processor.process_new_files(path_to.new_gestor)
