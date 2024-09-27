@@ -22,7 +22,7 @@ class XMLProcessor:
             if extraction_type == 'gestor':
                 return self._extract_gestor_data(root)
             elif extraction_type == 'compras':
-                return self._extract_compras_data(root)
+                return self._extract_compras_data(root, xml_file)
         except ET.ParseError:
             print(f"Error parsing XML file: {xml_file}")
             return None
@@ -40,10 +40,16 @@ class XMLProcessor:
 
         return nnf_text, dhEmi_text, xFant_text
 
-    def _extract_compras_data(self, root):
-        """Extract specific elements for Compras."""
+    def _extract_compras_data(self, root, xml_file):
+        """Extract specific elements for Compras and use filename if chNTR is None."""
         chNTR_element = root.find('.//nfe:protNFe/nfe:infProt/nfe:chNFe', self.namespaces)
         chNTR_text = chNTR_element.text if chNTR_element is not None else None
+
+        # Use filename without suffix "-nfe" if chNTR is None
+        if not chNTR_text:
+            file_name_without_ext = os.path.splitext(os.path.basename(xml_file))[0]
+            if file_name_without_ext.endswith("-nfe"):
+                chNTR_text = file_name_without_ext[:-4]  # Remove "-nfe" suffix
 
         xMun_element = root.find('.//nfe:dest/nfe:enderDest/nfe:xMun', self.namespaces)
         xMun_text = xMun_element.text if xMun_element is not None else None
@@ -51,8 +57,11 @@ class XMLProcessor:
         infCpl_element = root.find('.//nfe:infAdic/nfe:infCpl', self.namespaces)
         infCpl_text = infCpl_element.text if infCpl_element is not None else None
 
-        number_match = re.search(r'\b\d{44}\b', infCpl_text)
-        extracted_number = number_match.group(0) if number_match else None
+        number_match = re.search(r'\b[^\s]{38,}\b', infCpl_text)  
+        if number_match:
+            extracted_number = re.sub(r'\D', '', number_match.group(0))
+        else:
+            extracted_number = None
 
         vProd_element = root.find('.//nfe:total/nfe:ICMSTot/nfe:vProd', self.namespaces)
         vProd_text = vProd_element.text if vProd_element is not None else None
@@ -144,6 +153,7 @@ class XMLProcessor:
 
         combined_data.to_excel(excel_file_path, index=False)
         print(f"Data saved to: {excel_file_path}")
+
 
 class ExcelMerger:
     def __init__(self, file1_path, file2_path, merge_column, output_file):
