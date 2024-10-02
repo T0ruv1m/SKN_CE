@@ -10,18 +10,17 @@ from xml_cache_controller import XMLreading, CacheOperations
 class PDFMergerApp:
     
     #GUI:
-    
     def __init__(self, root):
         self.root = root
-        self.root.title("Multi-Routine Processor")
+        self.root.title("Sakana Tool")
 
         # Configure the main window
-        self.root.geometry('750x400')
+        self.root.geometry('760x320')
 
         # Create a logger
         self.logger_frame = tk.Frame(self.root)
         self.logger_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
-        self.log_text = scrolledtext.ScrolledText(self.logger_frame, wrap=tk.WORD, height=15, width=70, bg='#2A2B2A', fg='white')
+        self.log_text = scrolledtext.ScrolledText(self.logger_frame, wrap=tk.WORD, height=10, width=40, bg='#0F172A', fg='white')
         self.log_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Create a frame for buttons
@@ -34,19 +33,19 @@ class PDFMergerApp:
         self.auto_pipeline_button.pack(side=tk.LEFT, padx=5)
 
         # Create buttons for different routines, side by side
-        self.clear_cache_button = tk.Button(self.button_frame, text="Clear Cache", command=self.clear_cache_thread)
+        self.clear_cache_button = tk.Button(self.button_frame, text="Limpar Cache", command=self.clear_cache_thread)
         self.clear_cache_button.pack(side=tk.LEFT, padx=5)
         
         self.scan_xml_files_button = tk.Button(self.button_frame, text="Varredura XML", command=self.start_scan_xml_thread)
         self.scan_xml_files_button.pack(side=tk.LEFT, padx=5)
 
-        self.xml_gestor_button = tk.Button(self.button_frame, text="Extrair XML|Gestor", command=self.start_xml_gestor_thread)
+        self.xml_gestor_button = tk.Button(self.button_frame, text="Extrair Dados Mimi", command=self.start_xml_gestor_thread)
         self.xml_gestor_button.pack(side=tk.LEFT, padx=5)
 
-        self.xml_compras_button = tk.Button(self.button_frame, text="Extrair XML|Compras", command=self.start_xml_compras_thread)
+        self.xml_compras_button = tk.Button(self.button_frame, text="Extrair Dados Gestor", command=self.start_xml_compras_thread)
         self.xml_compras_button.pack(side=tk.LEFT, padx=5)
 
-        self.excel_merge_button = tk.Button(self.button_frame, text="Mesclar Excel", command=self.start_excel_merge_thread)
+        self.excel_merge_button = tk.Button(self.button_frame, text="Combinar Excel", command=self.start_excel_merge_thread)
         self.excel_merge_button.pack(side=tk.LEFT, padx=5)
 
         self.merge_button = tk.Button(self.button_frame, text="Fusão PDFs", command=self.start_merge_thread)
