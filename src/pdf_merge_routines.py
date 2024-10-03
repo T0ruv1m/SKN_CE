@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import json
 from pypdf import PdfWriter
-
+from datetime import datetime
 
 def start_merging_routine(dir, log_callback=None, progress_callback=None):
     """Starts the PDF merging process with error handling."""
@@ -28,7 +28,7 @@ def start_merging_routine(dir, log_callback=None, progress_callback=None):
             progress_callback(0, total_files)
         
         missing_files = set()
-        find_and_merge_pdfs(
+        successfully_merged_count = find_and_merge_pdfs(
             excel_file, folder_path_gestor, folder_path_chNTR, column1, column2, output_folder, 
             year_column, folder_column, suffix_column1, suffix_column2, nNF_column, 
             abbrev_length=3, log_callback=log_callback, 
@@ -37,6 +37,13 @@ def start_merging_routine(dir, log_callback=None, progress_callback=None):
         )
         if log_callback:
             log_callback(f"Total de arquivos PDF ausentes: {len(missing_files)}")
+
+        # Log today's date and time with the successfully merged files
+        current_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        log_callback(f"Data de hoje: {current_date}. Total de arquivos mesclados: {successfully_merged_count}")
+        
+        # Save timestamp and merge count to CSV
+        save_execution_log(dir.execution_log_csv, successfully_merged_count, current_date)
 
     except Exception as e:
         if log_callback:
@@ -166,10 +173,13 @@ def find_and_merge_pdfs(excel_file, folder_path_gestor, folder_path_chNTR, colum
 
         if log_callback:
             log_callback(f"Mesclagem concluída. Total de arquivos mesclados nesta execução: {successfully_merged_count}")
+        
+        return successfully_merged_count
 
     except Exception as e:
         if log_callback:
             log_callback(f"Erro ao buscar e mesclar PDFs: {e}")
+        return 0
 
 def merge_pdfs(pdf_list, output_path):
     """Merges PDF files from pdf_list into a single PDF at output_path."""
@@ -181,3 +191,13 @@ def merge_pdfs(pdf_list, output_path):
         merger.close()
     except Exception as e:
         raise RuntimeError(f"Erro ao mesclar PDFs: {e}")
+
+def save_execution_log(csv_file, merged_count, timestamp):
+    """Saves the execution timestamp and number of merged files to a CSV."""
+    data = {'Timestamp': [timestamp], 'Files Merged': [merged_count]}
+    df = pd.DataFrame(data)
+    
+    if not os.path.exists(csv_file):
+        df.to_csv(csv_file, index=False)
+    else:
+        df.to_csv(csv_file, mode='a', header=False, index=False)
