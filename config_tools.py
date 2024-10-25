@@ -21,23 +21,23 @@ class DIR:
             #'chNTR_data': '\\\\Mimitop\\PDF',
             'chNTR_data': 'I:\\Outros computadores\\MIMI\\PDF',
             
-            'timestamp': '../root/timestamp.txt',
-            'credentials_file': '../root/credentials.json',
-            'token_file': '../root/token.json',
-            'json_object': '../root/object.json',
+            'timestamp': './root/timestamp.txt',
+            'credentials_file': './root/credentials.json',
+            'token_file': './root/token.json',
+            'json_object': './root/object.json',
             
-            'merged_files_json':'../data/cache_data/merged_files.json',
-            'execution_log_csv':'../data/cache_data/execution_log.csv',
+            'merged_files_json':'./data/cache_data/merged_files.json',
+            'execution_log_csv':'./data/cache_data/execution_log.csv',
 
-            'cache_compras':'../data/cache_data/cache_compras.csv',
-            'cache_gestor':'../root/data/cache_data/cache_gestor.csv',
+            'cache_compras':'./data/cache_data/cache_compras.csv',
+            'cache_gestor':'./root/data/cache_data/cache_gestor.csv',
             
-            'new_compras':'../data/cache_data/new_compras.csv',
-            'new_gestor':'../data/cache_data/new_gestor.csv',
+            'new_compras':'./data/cache_data/new_compras.csv',
+            'new_gestor':'./data/cache_data/new_gestor.csv',
 
-            'xl_compras':'../data/xlsx_data/xl_compras.xlsx',
-            'xl_gestor':'../data/xlsx_data/xl_gestor.xlsx',
-            'xl_combi':'../data/xlsx_data/xl_combinada.xlsx'  # Removed redundant key
+            'xl_compras':'./data/xlsx_data/xl_compras.xlsx',
+            'xl_gestor':'./data/xlsx_data/xl_gestor.xlsx',
+            'xl_combi':'./data/xlsx_data/xl_combinada.xlsx'  # Removed redundant key
 
 
         }
