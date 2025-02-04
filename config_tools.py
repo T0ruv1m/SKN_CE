@@ -14,12 +14,14 @@ class DIR:
             'res': '../docs/registro',
             'reg': '../docs/residuo',
             'mesc': 'I:\\Drives compartilhados\\Compartilhamento Registro de liquidação',
-            
+
+
             #'xml_data': '\\\\Mimitop\\02334933000140',  # UNC path with double backslashes
-            'xml_data': 'I:\\Outros computadores\MIMI\\Arqs\\02334933000140',
-            'gestor_data': 'I:/.shortcut-targets-by-id/1ghlKQQOndN3wMxNW4qM3pTPDbtrYJmTa/GestorDFe/Documentos/CONSORCIO INTERMUNICIPAL DE SAUDE ALTO DAS VERTENTES',
+            'xml_data': 'I:\\Outros computadores\\MIMI\\Arqs\\02334933000140',
+            'gestor_data': 'I:\\.shortcut-targets-by-id\\1ghlKQQOndN3wMxNW4qM3pTPDbtrYJmTa\\GestorDFe\\Documentos',
             #'chNTR_data': '\\\\Mimitop\\PDF',
             'chNTR_data': 'I:\\Outros computadores\\MIMI\\PDF',
+            #'chNTR_data': 'I:\\.shortcut-targets-by-id\\1ghlKQQOndN3wMxNW4qM3pTPDbtrYJmTa\\GestorDFe\\Documentos',
             
             'timestamp': './root/timestamp.txt',
             'credentials_file': './root/credentials.json',
@@ -37,8 +39,8 @@ class DIR:
 
             'xl_compras':'./data/xlsx_data/xl_compras.xlsx',
             'xl_gestor':'./data/xlsx_data/xl_gestor.xlsx',
-            'xl_combi':'./data/xlsx_data/xl_combinada.xlsx'  # Removed redundant key
-
+            'xl_combi':'./data/xlsx_data/xl_combinada.xlsx',  # Removed redundant key
+            'xl_consulta': 'I:\\Drives compartilhados\\Compartilhamento Registro de liquidação\\Tabelas\\consulta.xlsx'
 
         }
         

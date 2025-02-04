@@ -174,9 +174,14 @@ class PDFMergerApp:
             file2 = path_to.xl_gestor
             column_to_merge_on = 'chNTR'
             output_file = path_to.xl_combi
+            xl_consulta = path_to.xl_consulta
 
             merger = ExcelMerger(file1, file2, column_to_merge_on, output_file)
             merger.merge_excel_files()
+            mergerConsulta = ExcelMerger(file1, file2, column_to_merge_on, xl_consulta)
+            mergerConsulta.merge_excel_files()
+            mergerConsulta.transform_to_table(xl_consulta)
+
 
             self.log("Excel merging completed successfully.")
         except Exception as e:

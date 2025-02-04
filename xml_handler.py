@@ -5,6 +5,8 @@ import pandas as pd
 import re
 import logging
 from config_tools import DIR
+from openpyxl import load_workbook
+from openpyxl.worksheet.table import Table, TableStyleInfo
 
 class XMLProcessor:
     """Process XML files to extract specific elements and save them to an Excel file."""
@@ -201,6 +203,35 @@ class ExcelMerger:
         # Salva o resultado em um novo arquivo Excel
         merged_df.to_excel(self.output_file, index=False)
         print(f"Arquivos combinados e salvos em {self.output_file}")
+
+    def transform_to_table(self,file_path):
+
+        try:
+            wb = load_workbook(file_path)
+            sheet = wb.active
+
+            min_row = sheet.min_row
+            max_row = sheet.max_row
+            min_col = sheet.min_column
+            max_col = sheet.max_column
+            table_range = f"{sheet.cell(row=min_row, column=min_col).coordinate}:{sheet.cell(row=max_row,column=max_col).coordinate}"
+
+            table = Table(displayName="Datatable", ref=table_range)
+
+            style = TableStyleInfo(
+                        name="TableStyleMedium9",
+                        showFirstColumn=False,
+                        showLastColumn=False,
+                        showRowStripes=True,
+                        showColumnStripes=True,
+                    )
+            table.tableStyleInfo = style
+            sheet.add_table(table)
+
+            wb.save(file_path)
+            print(f"Tabela Criada com Sucesso em {file_path}")
+        except Exception as e:
+            print(f"Erro ao criar tabela!")
 
 if __name__ == "__main__":
     # Define paths
