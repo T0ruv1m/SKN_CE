@@ -8,8 +8,7 @@ from pdf_merge_routines import start_merging_routine
 from xml_cache_controller import XMLreading, CacheOperations
 
 class PDFMergerApp:
-    
-    #GUI:
+
     def __init__(self, root):
         self.root = root
         self.root.title("Sakana Tool")
