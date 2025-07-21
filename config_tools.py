@@ -17,11 +17,12 @@ class DIR:
 
 
             #'xml_data': '\\\\Mimitop\\02334933000140',  # UNC path with double backslashes
-            'xml_data': 'I:\\Outros computadores\\MIMI\\Arqs\\02334933000140',
+            #'xml_data': 'I:\\Outros computadores\\MIMI\\Arqs\\02334933000140',
+            'xml_data': 'I:\\.shortcut-targets-by-id\\1ghlKQQOndN3wMxNW4qM3pTPDbtrYJmTa\\GestorDFe\\Documentos',
             'gestor_data': 'I:\\.shortcut-targets-by-id\\1ghlKQQOndN3wMxNW4qM3pTPDbtrYJmTa\\GestorDFe\\Documentos',
             #'chNTR_data': '\\\\Mimitop\\PDF',
-            'chNTR_data': 'I:\\Outros computadores\\MIMI\\PDF',
-            #'chNTR_data': 'I:\\.shortcut-targets-by-id\\1ghlKQQOndN3wMxNW4qM3pTPDbtrYJmTa\\GestorDFe\\Documentos',
+            #'chNTR_data': 'I:\\Outros computadores\\MIMI\\PDF',
+            'chNTR_data': 'I:\\.shortcut-targets-by-id\\1ghlKQQOndN3wMxNW4qM3pTPDbtrYJmTa\\GestorDFe\\Documentos',
             
             'timestamp': './root/timestamp.txt',
             'credentials_file': './root/credentials.json',

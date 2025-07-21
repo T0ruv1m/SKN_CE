@@ -65,8 +65,11 @@ def find_and_merge_pdfs(excel_file, folder_path_gestor, folder_path_chNTR, colum
         pdf_files_chNTR = {}
         complementary_files = {}
 
+        ignore_folders = ['Auditoria']
+
         # Walk through gestor files
         for root, dirs, files in os.walk(folder_path_gestor):
+            dirs[:] = [d for d in dirs if d not in ignore_folders]
             for file in files:
                 if file.endswith(".pdf"):
                     file_name = os.path.splitext(file)[0]
